@@ -6,11 +6,7 @@
     <projectFile profileName="https">webapp.csproj</projectFile>
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="f5b9fdb7-b2ad-4b2b-b770-db13d3120554" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/.idea.webapp/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/.idea.webapp/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Features/Subject/SubjectController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Features/Subject/SubjectController.cs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/Features/Test/TestController.cs" beforeDir="false" afterPath="$PROJECT_DIR$/Features/Test/TestController.cs" afterDir="false" />
-    </list>
+    <list default="true" id="f5b9fdb7-b2ad-4b2b-b770-db13d3120554" name="Changes" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -100,7 +96,7 @@
       <option name="presentableId" value="Default" />
       <updated>1671210167574</updated>
       <workItem from="1671210169258" duration="14103000" />
-      <workItem from="1671632833984" duration="8411000" />
+      <workItem from="1671632833984" duration="8818000" />
     </task>
     <servers />
   </component>
