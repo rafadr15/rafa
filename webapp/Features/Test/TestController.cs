@@ -5,7 +5,7 @@ using webapp.Features.Test.TestViews;
 namespace webapp.Features.Test;
 
 [ApiController]
-[Route("assignments")]
+[Route("test")]
 
 public class TestController : ControllerBase
 {
@@ -74,17 +74,39 @@ public class TestController : ControllerBase
     }
 
     [HttpDelete("{id}")]
-        
-           public TestModel Delete([FromRoute] string id)
-        {
-            var test = _mockDbTestModels.FirstOrDefault(x => x.id == id);
-            if (test is null)
-            {
-                return null;
-            }
 
-            _mockDbTestModels.Remove(test);
-            return test;
+    public TestModel Delete([FromRoute] string id)
+    {
+        var test = _mockDbTestModels.FirstOrDefault(x => x.id == id);
+        if (test is null)
+        {
+            return null;
         }
+
+        _mockDbTestModels.Remove(test);
+        return test;
     }
+
+
+    [HttpPatch("{id}")]
+    public TestResponse Patch([FromRoute] string id, [FromBody] TestRequest request)
+    {
+        var test = _mockDbTestModels.FirstOrDefault(x => x.id == id);
+        if (test is null)
+        {
+            return null;
+        }
+
+        test.TestDate = request.TestDate;
+        test.Subject = request.Subject;
+        test.Updated=DateTime.UtcNow;
+
+        return new TestResponse
+        {
+            Id = test.id,
+            TestDate = test.TestDate,
+            Subject = test.Subject
+        };
+    }
+}
 

@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using webapp.Features.Subject.SubjectModels;
 using webapp.Features.Subject.SubjectViews;
+using webapp.Features.Test.TestViews;
 
 namespace webapp.Features.Subject;
 
@@ -88,6 +89,31 @@ public class SubjectController : ControllerBase
         _mockDBSubject.Remove(subject);
         return subject;
 
+    }
+
+
+    [HttpPatch("{id}")]
+
+    public SubjectResponse Patch([FromRoute] string id, [FromBody] SubjectRequest request)
+    {
+        var subject = _mockDBSubject.FirstOrDefault(x => x.id == id);
+        if (subject is null)
+        {
+            return null;
+        }
+
+        subject.Name = request.Name;
+        subject.ProfessorMail = request.ProfessorMail;
+        subject.Grades = request.Grades;
+        subject.Updated = DateTime.UtcNow;
+
+        return new SubjectResponse
+        {
+            Id = subject.id,
+            Name = subject.Name,
+            ProfessorMail = subject.ProfessorMail,
+            Grades = subject.Grades.ToList()
+        };
     }
     
 }
