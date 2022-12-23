@@ -2,7 +2,6 @@
 using Microsoft.AspNetCore.Routing.Template;
 using webapp.Features.Assignments.Models;
 using webapp.Features.Assignments.Views;
-
 namespace webapp.Features.Assignments;
 
 [ApiController]
@@ -12,9 +11,7 @@ public class AssignmentsController : ControllerBase
     private static List<AssignmentModel>
         _mockDB = new List<AssignmentModel>(); //lista care functioneaza ca baza de date
 
-    public AssignmentsController()
-    {
-    }
+    public AssignmentsController() {}
 
 
     [HttpPost] //adauga info in baza de date
@@ -86,31 +83,29 @@ public class AssignmentsController : ControllerBase
         _mockDB.Remove(assignment);
         return assignment;
     }
-    //
-    // [HttpPatch("{id}")]
-    //
-    //
-    // public AssignmentResponse Change([FromRoute] string id, [FromBody] string sub, [FromBody] string desc,
-    //     [FromBody] DateTime dead)
-    // {
-    //     var assignment = _mockDB.FirstOrDefault(x => x.id == id);
-    //     if (assignment is null)
-    //     {
-    //         return null;
-    //     }
-    //
-    //       new AssignmentResponse
-    //     {
-    //       Id = assignment.id,
-    //        Deadline=dead,
-    //        Description=desc,
-    //       Subject=sub
-    //
-    //     };
-    //
-    //
-    //
-    // }
+    
+
+    [HttpPatch("{id}")]
+     public AssignmentResponse Patch([FromRoute] string id, [FromBody] AssignmentRequest request)
+     {
+         var assignment = _mockDB.FirstOrDefault(x => x.id == id);
+    
+         if (assignment is null)
+             return null;
+    
+         assignment.Deadline = request.Deadline;
+         assignment.Description = request.Description;
+         assignment.Subject = request.Subject;
+         assignment.Updated = DateTime.UtcNow;
+    
+         return new AssignmentResponse
+         {
+             Id =assignment.id,
+             Deadline = assignment.Deadline, 
+             Description = assignment.Description,
+             Subject = assignment.Subject
+         }; 
+     }
 }
 
 //functie de delete si una de update [Httpdelete] [Httppatch] - request nou ca parametru 
