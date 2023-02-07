@@ -482,4 +482,4 @@ fabric.properties
 
 webapp/.idea/.idea.webapp/.idea/
 
-webapp/appsettings.Development.json
+webapp/webapp/appsettings.Development.json
