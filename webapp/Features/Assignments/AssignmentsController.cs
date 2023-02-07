@@ -69,6 +69,8 @@ public class AssignmentsController : ControllerBase
     }
 
     [HttpGet("{id}")]
+    
+    //async=task
     public async Task<ActionResult<AssignmentResponse>> Get([FromRoute] string id)
     {
         var entity = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.id == id);

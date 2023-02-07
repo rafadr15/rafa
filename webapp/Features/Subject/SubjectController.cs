@@ -1,4 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
+using webapp.Database;
 using webapp.Features.Subject.SubjectModels;
 using webapp.Features.Subject.SubjectViews;
 using webapp.Features.Test.TestViews;
@@ -11,7 +12,8 @@ namespace webapp.Features.Subject;
 
 public class SubjectController : ControllerBase
 {
-    private static List<SubjectModel> _mockDBSubject = new List<SubjectModel>();
+    private readonly AppDbContext _dbContext;
+  //  private static List<SubjectModel> _mockDBSubject = new List<SubjectModel>();
 
     public SubjectController()
     {
