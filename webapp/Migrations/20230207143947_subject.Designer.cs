@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using webapp.Database;
@@ -12,9 +13,11 @@ using webapp.Database;
 namespace webapp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230207143947_subject")]
+    partial class subject
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,10 +41,7 @@ namespace webapp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<float>("Grade")
-                        .HasColumnType("real");
-
-                    b.Property<string>("SubjectId")
+                    b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -79,32 +79,6 @@ namespace webapp.Migrations
                     b.HasKey("id");
 
                     b.ToTable("Subjects");
-                });
-
-            modelBuilder.Entity("webapp.Features.Test.TestModels.TestModel", b =>
-                {
-                    b.Property<string>("id")
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("Created")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<float>("Grade")
-                        .HasColumnType("real");
-
-                    b.Property<string>("SubjectId")
-                        .IsRequired()
-                        .HasColumnType("text");
-
-                    b.Property<DateTime>("TestDate")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("Updated")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("id");
-
-                    b.ToTable("Tests");
                 });
 #pragma warning restore 612, 618
         }

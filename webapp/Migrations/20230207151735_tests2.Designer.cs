@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 using webapp.Database;
@@ -12,9 +13,11 @@ using webapp.Database;
 namespace webapp.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230207151735_tests2")]
+    partial class tests2
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -38,10 +41,7 @@ namespace webapp.Migrations
                         .IsRequired()
                         .HasColumnType("text");
 
-                    b.Property<float>("Grade")
-                        .HasColumnType("real");
-
-                    b.Property<string>("SubjectId")
+                    b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("text");
 
@@ -86,25 +86,53 @@ namespace webapp.Migrations
                     b.Property<string>("id")
                         .HasColumnType("text");
 
+                    b.Property<string>("Assignmentid")
+                        .IsRequired()
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("Created")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<float>("Grade")
-                        .HasColumnType("real");
-
-                    b.Property<string>("SubjectId")
+                    b.Property<string>("Subject")
                         .IsRequired()
                         .HasColumnType("text");
 
                     b.Property<DateTime>("TestDate")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<string>("TestModelid")
+                        .HasColumnType("text");
+
                     b.Property<DateTime>("Updated")
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("id");
 
+                    b.HasIndex("Assignmentid");
+
+                    b.HasIndex("TestModelid");
+
                     b.ToTable("Tests");
+                });
+
+            modelBuilder.Entity("webapp.Features.Test.TestModels.TestModel", b =>
+                {
+                    b.HasOne("webapp.Features.Assignments.Models.AssignmentModel", "Assignment")
+                        .WithMany()
+                        .HasForeignKey("Assignmentid")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("webapp.Features.Test.TestModels.TestModel", null)
+                        .WithMany("Tests")
+                        .HasForeignKey("TestModelid");
+
+                    b.Navigation("Assignment");
+                });
+
+            modelBuilder.Entity("webapp.Features.Test.TestModels.TestModel", b =>
+                {
+                    b.Navigation("Tests");
                 });
 #pragma warning restore 612, 618
         }

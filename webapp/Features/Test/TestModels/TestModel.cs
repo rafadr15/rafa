@@ -6,10 +6,12 @@ namespace webapp.Features.Test.TestModels;
 
 public class TestModel : Model 
 {
-    public string Subject { get; set; }
+    public string SubjectId { get; set; }
+
+    public float Grade { get; set; }
     public DateTime TestDate { get; set; }
-    public AssignmentModel Assignment { get; set; }
-    public List<TestModel> Tests { get; set; }
+   
+    
 }
 
 

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Routing.Template;
 using Microsoft.EntityFrameworkCore;
 using webapp.Database;
@@ -9,9 +10,7 @@ namespace webapp.Features.Assignments;
 [ApiController]
 [Route("assignments")] //zona de endpoint
 public class AssignmentsController : ControllerBase
-{
-
-
+{ 
     private  readonly AppDbContext _dbContext;
 
 //DEPENDENCY INJECTIONS (DI)face rost de serviicile de care avem nevoie 
@@ -22,71 +21,86 @@ public class AssignmentsController : ControllerBase
     }
 
 
-    [HttpPost] //adauga info in baza de date
-    public async Task<AssignmentResponse> Add(AssignmentRequest request)
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status201Created)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]//adauga info in baza de date
+    public async Task<ActionResult<AssignmentResponse>> Add(AssignmentRequest request)
     {
+        var subject = await _dbContext.Subjects.FirstOrDefaultAsync(x =>x.id==request.Subject);
+        if (subject is null)
+        {
+            return NotFound("nu e");
+        }
+        
+        
         var assignment = new AssignmentModel
         {
             id = Guid.NewGuid().ToString(),
             Created = DateTime.UtcNow,
             Updated = DateTime.UtcNow,
-            Subject = request.Subject,
+            SubjectId = request.Subject,
             Description = request.Description,
-            Deadline = request.Deadline
+            Deadline = request.Deadline,
+            Grade= request.Grade
 
         };
+        subject.Grades.Add(assignment.Grade);
         //folosim metodetele async in cazul in care fac requesturi catre un server(gen. baze de date)
         //ptc nu stim cand o sa primim un raspuns(milisecunde, secunde)
         //si vrem sa asteptam acel raspuns oricat e nevoie 
 
 
-        var response = await _dbContext.AddAsync(assignment);
+        var response = await _dbContext.Assignments.AddAsync(assignment);
+
         await _dbContext.SaveChangesAsync();
-        //_mockDB.Add(assignment);
-        return new AssignmentResponse
+        return Ok(new AssignmentResponse
         {
             Id = response.Entity.id,
-            Subject = response.Entity.Subject,
+            Subject = response.Entity.SubjectId,
             Description = response.Entity.Description,
-            Deadline = response.Entity.Deadline
-        };
+            Deadline = response.Entity.Deadline,
+            Grade=response.Entity.Grade
+        });
     }
 
     [HttpGet]
-    public async Task<IEnumerable<AssignmentResponse>> Get()
+    public async Task<ActionResult<IEnumerable<AssignmentResponse>>> Get()
     {
-        var entities = await _dbContext.Assignments.ToListAsync();
-        return entities.Select(
-            assignment => new AssignmentResponse
-            {
-                Id = assignment.id,
-                Subject = assignment.Subject,
-                Description = assignment.Description,
-                Deadline = assignment.Deadline
+        return Ok(await _dbContext.Assignments.Include(x => x.SubjectId).Select(x => new AssignmentResponse
+        {
+            Id = x.id,
+            Subject = x.SubjectId,
+            Description = x.Description,
+            Deadline = x.Deadline,
+            Grade=x.Grade
+        }).ToListAsync());
 
-            }
-        ); //fiecare obiect din lista va fi transf intr un assignment response
     }
 
     [HttpGet("{id}")]
-    
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status200OK)]
     //async=task
     public async Task<ActionResult<AssignmentResponse>> Get([FromRoute] string id)
     {
-        var entity = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.id == id);
-        //var assignment = _mockDB.FirstOrDefault(x => x.id == id);
+        var entity = await _dbContext.Assignments.Include(x => x.SubjectId)
+            .FirstOrDefaultAsync(x => x.id == x.SubjectId);
+        //tabela de assignment va cauta intr-o tabela dupa subjectid
         if (entity is null)
         {
-            return NotFound("Assignment not found");
+            return NotFound();
         }
 
-        return new AssignmentResponse
-        {
-            Id = entity.id,
-            Subject = entity.Subject,
-            Description = entity.Description,
-            Deadline = entity.Deadline
-        };
+        return Ok(new AssignmentResponse
+            {
+                Id = entity.id,
+                Subject = entity.SubjectId,
+                Description = entity.Description,
+                Deadline = entity.Deadline,
+                Grade = entity.Grade
+                
+            });
     }
 
 
@@ -100,14 +114,15 @@ public class AssignmentsController : ControllerBase
             return NotFound();
         }
 
-        _dbContext.Remove(entity);
+      var response=  _dbContext.Remove(entity);
         await _dbContext.SaveChangesAsync();
         return new AssignmentResponse()
         {
-           Id=entity.id,
-           Deadline = entity.Deadline,
-           Description = entity.Description,
-           Subject = entity.Subject
+           Id=response.Entity.id,
+           Deadline = response.Entity.Deadline,
+           Description = response.Entity.Description,
+           Subject = response.Entity.SubjectId,
+           Grade= response.Entity.Grade
 
         };
 
@@ -124,7 +139,8 @@ public class AssignmentsController : ControllerBase
     
          entity.Deadline = request.Deadline;
          entity.Description = request.Description;
-         entity.Subject = request.Subject;
+         entity.Grade = request.Grade;
+         entity.SubjectId = request.Subject;
          entity.Updated = DateTime.UtcNow;
          await _dbContext.SaveChangesAsync();
     
@@ -133,7 +149,8 @@ public class AssignmentsController : ControllerBase
              Id =entity.id,
              Deadline = entity.Deadline, 
              Description = entity.Description,
-             Subject = entity.Subject
+             Subject = entity.SubjectId,
+             Grade=entity.Grade
          }; 
      }
 }
