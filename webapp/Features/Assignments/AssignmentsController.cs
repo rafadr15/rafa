@@ -45,6 +45,7 @@ public class AssignmentsController : ControllerBase
             Grade= request.Grade
 
         };
+        
         subject.Grades.Add(assignment.Grade);
         //folosim metodetele async in cazul in care fac requesturi catre un server(gen. baze de date)
         //ptc nu stim cand o sa primim un raspuns(milisecunde, secunde)
@@ -54,13 +55,14 @@ public class AssignmentsController : ControllerBase
         var response = await _dbContext.Assignments.AddAsync(assignment);
 
         await _dbContext.SaveChangesAsync();
+        
         return Ok(new AssignmentResponse
         {
             Id = response.Entity.id,
             Subject = response.Entity.SubjectId,
             Description = response.Entity.Description,
             Deadline = response.Entity.Deadline,
-            Grade=response.Entity.Grade
+            Grade = response.Entity.Grade
         });
     }
 
@@ -73,7 +75,7 @@ public class AssignmentsController : ControllerBase
             Subject = x.SubjectId,
             Description = x.Description,
             Deadline = x.Deadline,
-            Grade=x.Grade
+            Grade = x.Grade
         }).ToListAsync());
 
     }
@@ -114,11 +116,11 @@ public class AssignmentsController : ControllerBase
             return NotFound();
         }
 
-      var response=  _dbContext.Remove(entity);
+        var response=  _dbContext.Remove(entity);
         await _dbContext.SaveChangesAsync();
         return new AssignmentResponse()
         {
-           Id=response.Entity.id,
+           Id = response.Entity.id,
            Deadline = response.Entity.Deadline,
            Description = response.Entity.Description,
            Subject = response.Entity.SubjectId,
@@ -142,17 +144,17 @@ public class AssignmentsController : ControllerBase
          entity.Grade = request.Grade;
          entity.SubjectId = request.Subject;
          entity.Updated = DateTime.UtcNow;
+         
          await _dbContext.SaveChangesAsync();
     
          return new AssignmentResponse
          {
-             Id =entity.id,
+             Id = entity.id,
              Deadline = entity.Deadline, 
              Description = entity.Description,
              Subject = entity.SubjectId,
-             Grade=entity.Grade
+             Grade = entity.Grade
          }; 
      }
 }
 
-//functie de delete si una de update [Httpdelete] [Httppatch] - request nou ca parametru 
