@@ -69,7 +69,7 @@ public class AssignmentsController : ControllerBase
     [HttpGet]
     public async Task<ActionResult<IEnumerable<AssignmentResponse>>> Get()
     {
-        return Ok(await _dbContext.Assignments.Include(x => x.SubjectId).Select(x => new AssignmentResponse
+        return Ok(await _dbContext.Assignments.Select(x => new AssignmentResponse
         {
             Id = x.id,
             Subject = x.SubjectId,
@@ -86,8 +86,7 @@ public class AssignmentsController : ControllerBase
     //async=task
     public async Task<ActionResult<AssignmentResponse>> Get([FromRoute] string id)
     {
-        var entity = await _dbContext.Assignments.Include(x => x.SubjectId)
-            .FirstOrDefaultAsync(x => x.id == x.SubjectId);
+        var entity = await _dbContext.Assignments.FirstOrDefaultAsync(x => x.id == x.SubjectId);
         //tabela de assignment va cauta intr-o tabela dupa subjectid
         if (entity is null)
         {

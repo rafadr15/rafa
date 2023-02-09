@@ -10,18 +10,16 @@ namespace webapp.Features.Test;
 [Route("test")]
 
 public class TestController : ControllerBase
+
 {
+    
     private readonly AppDbContext _dbContext;
-       // _mockDbTestModels = new List<TestModel>();
-
-
+    
     public TestController(AppDbContext dbContext)
     {
         _dbContext = dbContext;
     }
-
-
-
+    
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -64,9 +62,8 @@ public class TestController : ControllerBase
     [ProducesResponseType(StatusCodes.Status200OK)]
     public  async Task<ActionResult<IEnumerable<TestResponse>>> Get()
 
-    {   
-         
-        return Ok(await _dbContext.Tests.Include(x => x.SubjectId).Select(x => new TestResponse
+    {
+        return Ok(await _dbContext.Tests.Select(x => new TestResponse
         {
             Id = x.id,
             Subject = x.SubjectId,
@@ -85,9 +82,7 @@ public class TestController : ControllerBase
 
     public  async  Task<ActionResult<TestResponse>> Get([FromRoute] string id)
     {
-
-        var entity = await _dbContext.Tests.Include(x => x.SubjectId)
-            .FirstOrDefaultAsync(x => x.id == x.SubjectId);
+        var entity = await _dbContext.Tests.FirstOrDefaultAsync(x => x.id == x.SubjectId);
         //tabela de assignment va cauta intr-o tabela dupa subjectid
         if (entity is null)
         {
